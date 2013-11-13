@@ -18,6 +18,11 @@ namespace HTML5.Controllers
 
         public ActionResult About()
         {
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Add(new SelectListItem { Text = "Swimming", Value = "1" });
+            items.Add(new SelectListItem { Text = "Cycling", Value = "2" });
+            items.Add(new SelectListItem { Text = "Running", Value = "3" });
+
             return View();
         }
 

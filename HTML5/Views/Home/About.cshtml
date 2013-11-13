@@ -1,6 +1,10 @@
 ﻿@{
-    Layout = "~/Layout.cshtml";
     ViewBag.Title = "About";
 }
 
 <h2>About</h2>
+
+<div>
+    <span><b>Show:</b></span>
+    @Html.DropDownList("items");
+</div>
