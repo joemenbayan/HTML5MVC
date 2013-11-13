@@ -16,6 +16,11 @@ namespace HTML5.Controllers
             return View();
         }
 
+        public ActionResult About()
+        {
+            return View();
+        }
+
         public JsonResult SaveCanvas(string data)
         {
             Session["canvas_data"] = data;

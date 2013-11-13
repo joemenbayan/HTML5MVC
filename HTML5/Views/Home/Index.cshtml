@@ -1,124 +1,10 @@
 ﻿@{
-    Layout = null;
 }
 
 <!DOCTYPE html>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-    <script type="text/javascript" src="../../Scripts/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="../../Scripts/modernizr-2.6.2.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            if (!Modernizr.canvas) {
-                alert("Your browser does not support the HTML5 canvas tag.");
-            }
-
-            $("#Button1").click(function () {
-                var canvas = document.getElementById('myCanvas');
-                var context = canvas.getContext("2d");
-                context.fillStyle = 'silver';
-                context.fillRect(0, 0, 500, 200);
-                context.fillStyle = 'Black';
-                context.lineWidth = 10;
-                context.font = '20pt Arial';
-                var x = canvas.width / 2;
-                var y = canvas.height / 2;
-                context.textAlign = "center";
-                context.fillText($("#Text1").val(), x, y);
-            });
-
-            $("#Button2").click(function () {
-                var data = '{ "data" : "' + $("#Text1").val() + '"}';
-                $.ajax({
-                    type: "POST",
-                    url: '/home/SaveCanvas',
-                    data: data,
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (result) {
-                        alert(result);
-                    },
-                    error: function(err) {
-                        alert(err.status + " - " + err.statusText);
-                    }
-                })
-            });
-
-            function OnKeyUp(event) {
-                var id = "#" + event.target.id;
-                var counterid = "#" + event.data.CounterId;
-                var text = $(id).val();
-
-                if (text.length > event.data.MaxLength) {
-                    if (!event.data.AllowOverflow) {
-                        $(id).text(text.substring(0, event.data.MaxLength));
-                    }
-                }
-
-                var diff = 0;
-                if (event.data.Type == 'Remaining') {
-                    diff = event.data.MaxLength - $(id).val().length;
-                    if (diff < 0) {
-                        $(counterid).removeClass(event.data.NormalCss);
-                        $(counterid).addClass(event.data.WarningCss);
-                    } else {
-                        $(counterid).removeClass(event.data.WarningCss);
-                        $(counterid).addClass(event.data.NormalCss);
-                    }
-                } else {
-                    diff = $(id).val().length;
-                    if (diff > event.data.MaxLength) {
-                        $(counterid).removeClass(event.data.NormalCss);
-                        $(counterid).addClass(event.data.WarningCss);
-                    } else {
-                        $(counterid).removeClass(event.data.WarningCss);
-                        $(counterid).addClass(event.data.NormalCss);
-                    }
-                }
-
-                $(counterid).text(diff);
-            }
-
-            function OnBlur(event) {
-                var id = "#" + event.target.id;
-                $(id).keyup();
-            }
-
-            var eventData = {
-                MaxLength: 20,
-                Type: 'Remaining',
-                AllowOverflow: true,
-                CounterId: 'counter',
-                NormalCss: 'NormalCounter',
-                WarningCss: 'WarningCounter'
-            };
-
-            $("#textarea").keyup(eventData, OnKeyUp);
-            $("#textarea").blur(eventData, OnBlur);
-            
-
-            $("#submit").click(function (event) {
-                if (!confirm("Do you wish to submit the form?")) {
-                    event.preventDefault();
-                }
-            });
-        });
-    </script>
-    <style>
-        .NormalCounter {
-            color: black;
-        }
-
-        .WarningCounter {
-            color: red;
-        }
-    </style>
-</head>
-<body>
-    <div>
+    <div style="border: 2px solid black;">
+        <h3>Sample For Canvass</h3>
         <span>Enter Text: </span>
         <input type="text" id="Text1" value="@Session["canvas_data"]" />
         <input type="button" id="Button1" value="Draw" />
@@ -127,19 +13,123 @@
         <br />
         <canvas id="myCanvas" width="500" height="200"></canvas>
     </div>
+    <br />
+    <div style="border: 2px solid black;">
+        <h3>Sample For Text Counter</h3>
+        @using (Html.BeginForm()) {
+            <span>Enter some text: </span>
+            <br />
+            @Html.TextArea("textarea", new { rows="3", cols="50", @class="TextArea" })
+            <br />
+            <span class="NormalCounter">Character counter: </span>
+            <span id="counter" class="NormalCounter"></span>
+            <br /><br />
+            <button id="submit" type="submit" onclick="Submit_Click">Submit</button>
+            <br />
+            <label id="lblMessage"></label>
+        }
+    </div>
 
-    @using (Html.BeginForm()) {
-        <span>Enter some text: </span>
-        <br />
-        @Html.TextArea("textarea", new { rows="3", cols="50", @class="TextArea" })
-        <br />
-        <span class="NormalCounter">Character counter: </span>
-        <span id="counter" class="NormalCounter"></span>
-        <br /><br />
-        <button id="submit" type="submit" onclick="Submit_Click">Submit</button>
-        <br />
-        <label id="lblMessage"></label>
-    }
-    
-</body>
-</html>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        /* This code is for Canvass */
+        if (!Modernizr.canvas) {
+            alert("Your browser does not support the HTML5 canvas tag.");
+        }
+
+        $("#Button1").click(function () {
+            var canvas = document.getElementById('myCanvas');
+            var context = canvas.getContext("2d");
+            context.fillStyle = 'silver';
+            context.fillRect(0, 0, 500, 200);
+            context.fillStyle = 'Black';
+            context.lineWidth = 10;
+            context.font = '20pt Arial';
+            var x = canvas.width / 2;
+            var y = canvas.height / 2;
+            context.textAlign = "center";
+            context.fillText($("#Text1").val(), x, y);
+        });
+
+        $("#Button2").click(function () {
+            var data = '{ "data" : "' + $("#Text1").val() + '"}';
+            $.ajax({
+                type: "POST",
+                url: '/home/SaveCanvas',
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    alert(result);
+                },
+                error: function (err) {
+                    alert(err.status + " - " + err.statusText);
+                }
+            })
+        });
+
+        /* This code is for JQuery Text */
+        function OnKeyUp(event) {
+            var id = "#" + event.target.id;
+            var counterid = "#" + event.data.CounterId;
+            var text = $(id).val();
+
+            if (text.length > event.data.MaxLength) {
+                if (!event.data.AllowOverflow) {
+                    $(id).text(text.substring(0, event.data.MaxLength));
+                }
+            }
+
+            var diff = 0;
+            if (event.data.Type == 'Remaining') {
+                diff = event.data.MaxLength - $(id).val().length;
+                if (diff < 0) {
+                    $(counterid).removeClass(event.data.NormalCss);
+                    $(counterid).addClass(event.data.WarningCss);
+                } else {
+                    $(counterid).removeClass(event.data.WarningCss);
+                    $(counterid).addClass(event.data.NormalCss);
+                }
+            } else {
+                diff = $(id).val().length;
+                if (diff > event.data.MaxLength) {
+                    $(counterid).removeClass(event.data.NormalCss);
+                    $(counterid).addClass(event.data.WarningCss);
+                } else {
+                    $(counterid).removeClass(event.data.WarningCss);
+                    $(counterid).addClass(event.data.NormalCss);
+                }
+            }
+
+            $(counterid).text(diff);
+        }
+
+        function OnBlur(event) {
+            var id = "#" + event.target.id;
+            $(id).keyup();
+        }
+
+        var eventData = {
+            MaxLength: 20,
+            Type: 'Remaining',
+            AllowOverflow: true,
+            CounterId: 'counter',
+            NormalCss: 'NormalCounter',
+            WarningCss: 'WarningCounter'
+        };
+
+        $("#textarea").keyup(eventData, OnKeyUp);
+        $("#textarea").blur(eventData, OnBlur);
+
+
+        $("#submit").click(function (event) {
+            if (!confirm("Do you wish to submit the form?")) {
+                event.preventDefault();
+            }
+        });
+
+        $("div").css("background-color", "#ded8d8");
+        $("div").css("padding", "8px");
+    });
+</script>
