@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using HTML5.Models;
 
 namespace HTML5.Controllers
 {
@@ -23,6 +24,9 @@ namespace HTML5.Controllers
             items.Add(new SelectListItem { Text = "Cycling", Value = "2" });
             items.Add(new SelectListItem { Text = "Running", Value = "3" });
 
+            ViewData["ListItems"] = items;
+
+            
             return View();
         }
 
@@ -30,6 +34,21 @@ namespace HTML5.Controllers
         {
             Session["canvas_data"] = data;
             return Json("Canvas data stored successfully!");
+        }
+
+        public JsonResult Convert(TemperatureData t)
+        {
+            if (t.Unit == "C")
+            {
+                t.Value = (t.Value * 1.8m) + 32;
+                t.Unit = "F";
+            }
+            else
+            {
+                t.Value = (t.Value - 32) / 1.8m;
+                t.Unit = "C";
+            }
+            return Json(t, JsonRequestBehavior.AllowGet);
         }
 
     }
